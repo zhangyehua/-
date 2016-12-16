@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+	<link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+<h1>使用ajax五步曲写的页面</h1>
+<input type="button"  value="加载更多" class='getMore'>
+	<div class="container">
+		<div class="item">
+			<a href="#" class='cover'><img src="images/vol.859.jpg" alt=""></a>
+			<div class="bottom">
+				<a href="#">vol.847 用一首歌来想象你</a>
+				<div class='rightBox'>
+					<span class='icon-heart'>18554</span>
+					<span class='icon-comment'>292</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<!-- 导入js插件 模板插件-->
+<script type="text/javascript" src='js/template-native.js'></script>
+
+<!-- 导入自己封装的 ajax工具函数 -->
+<script type="text/javascript" src='js/ajax_tool.js'></script>
+
+<!-- 导入jq -->
+<script type="text/javascript" src='js/jquery.min.js'></script>
+
+<!-- 定义模板 -->
+<script type="text/template" id='template'>
+<%for(var i=0;i<items.length;i++){%>
+	<div class="item">
+			<a href="#" class='cover'><img src="<%=items[i].path%>" alt=""></a>
+			<div class="bottom">
+				<a href="#"><%=items[i].name%></a>
+			<div class='rightBox'>
+				<span class='icon-heart'><%=items[i].star%></span>
+				<span class='icon-comment'><%=items[i].message%></span>
+			</div>
+		</div>
+	</div>
+<%}%>
+</script>
+<script type="text/javascript">
+	// 入口函数
+	window.onload = function (){
+		var getmore = document.querySelector('.getMore');
+		// 绑定事件
+		getmore.onclick = function (){
+			// ajax五步曲
+			var xhr = new XMLHttpRequest();
+			xhr.open('post','01.getMore.php');
+			xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			xhr.send();
+			xhr.onreadystatechange = function (){
+				if(xhr.readyState == 4 && xhr.status == 200){
+
+					var data = xhr.responseText;
+					console.log(data);
+					var result = JSON.parse(data);
+					//放入对象中 填坑的对象
+					var obj = {
+						items: result
+					};
+					//引用模板 工具中的方法
+					var str = template('template',obj);
+					console.log(str);
+
+					// 添加到界面上
+					$('.container').append(str);
+					//innerHTML在jquery中不适用
+				}
+			}
+		}
+	}
+</script>
