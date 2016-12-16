@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+	<link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+<h1>使用jQuery写的页面</h1>
+<input type="button"  value="加载更多" class='getMore'>
+	<div class="container">
+		<div class="item">
+			<a href="#" class='cover'><img src="images/vol.859.jpg" alt=""></a>
+			<div class="bottom">
+				<a href="#">vol.847 用一首歌来想象你</a>
+				<div class='rightBox'>
+					<span class='icon-heart'>18554</span>
+					<span class='icon-comment'>292</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<!-- 导入js插件 模板插件-->
+<script type="text/javascript" src='js/template-native.js'></script>
+
+<!-- 导入自己封装的 ajax工具函数 -->
+<script type="text/javascript" src='js/ajax_tool.js'></script>
+
+<!-- 导入jq -->
+<script type="text/javascript" src='js/jquery.min.js'></script>
+
+<!-- 定义模板 -->
+<script type="text/template" id='template'>
+<%for(var i=0;i<items.length;i++){%>
+	<div class="item">
+			<a href="#" class='cover'><img src="<%=items[i].path%>" alt=""></a>
+			<div class="bottom">
+				<a href="#"><%=items[i].name%></a>
+			<div class='rightBox'>
+				<span class='icon-heart'><%=items[i].star%></span>
+				<span class='icon-comment'><%=items[i].message%></span>
+			</div>
+		</div>
+	</div>
+<%}%>
+</script>
+<script type="text/javascript">
+	// 入口函数
+	$(function (){
+		//绑定事件
+		$('.getMore').click(function (){
+			//使用 jquery 发送ajax请求 jQuery.ajax();
+			/*
+				jQuery.ajax();中
+				路径 URL
+				发送请求方法 type
+				函数（方法） success
+			 */
+			$.ajax({
+				url:'01.getMore.php',
+				type:'get',
+				success: function (data){
+					console.log(data);
+					//转换为 js对象
+					var result = JSON.parse(data);
+					//放入对象中 填坑的对象
+					var obj = {
+						items: result
+					};
+					//引用模板 工具中的方法
+					var str = template('template',obj);
+					console.log(str);
+
+
+					// 添加到界面上
+					$('.container').append(str);
+					//innerHTML在jquery中不适用
+
+				}
+
+			});
+			
+		});
+	})
+</script>
